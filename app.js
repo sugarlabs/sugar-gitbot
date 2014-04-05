@@ -7,7 +7,7 @@ var app = express();
 
 app.use(express.bodyParser());
 
-function createStatus(repository, revision, prUrl, state) {
+function createStatus(repository, revision, buildbotUrl, state) {
     var github = new GitHubApi({version: '3.0.0',
                                 debug: true});
 
@@ -19,7 +19,7 @@ function createStatus(repository, revision, prUrl, state) {
     var message = {user: "sugarlabs",
                    repo: splitted[splitted.length - 1],
                    sha: revision,
-                   target_url: prUrl,
+                   target_url: buildbotUrl,
                    state: state};
 
     github.statuses.create(message, function(error, data) {
@@ -40,21 +40,22 @@ app.post('/status', function (request, response) {
 
     for (var i = 0; i < packets.length; i++) {
         var packet = packets[i];
-        var payload = packet.payload;
+        var build = packet.payload;
 
         if (packet.event == 'buildStarted' ||
             packet.event == 'buildFinished') {
-            var sourceStamp = payload.build.sourceStamps[0];
+            var sourceStamp = build.sourceStamps[0];
 
             if (sourceStamp.category == 'pullrequest') {
                 var state = 'pending';
 
                 if (packet.event == 'buildFinished') {
-                    state = payload.results === 0 ? 'success': 'failure';
+                    state = build.results === 0 ? 'success': 'failure';
                 }
 
-                var splittedComments = sourceStamp.comments.split('\n');
-                var prUrl = splittedComments[splittedComments.length - 1];
+                var buildbotUrl = 'http://buildbot.sugarlabs.org' +
+                                  '/builders/try-master/builds' +
+                                  build.properties.buildnumber;
 
                 createStatus(sourceStamp.repository,
                              sourceStamp.revision,
