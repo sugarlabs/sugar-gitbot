@@ -8,21 +8,19 @@ var app = express();
 app.use(express.bodyParser());
 
 function createStatus(repository, revision, results) {
-    var github = new GitHubApi({version: "3.0.0"});
+    var github = new GitHubApi({version: '3.0.0',
+                                debug: true});
 
-    github.authenticate({type: "oauth",
-                         key: config.githubKey,
-                         secret: config.githubSecret});
+    github.authenticate({type: 'oauth',
+                         token: config.githubToken});
 
-    var splitted = repository.split("/");
-
-    var message = {user: splitted[splitted.length - 2],
-                   repo: splitted[splitted.length - 1],
+    var message = {user: "sugarlabs",
+                   repo: repository.split('/')[splitted.length - 1],
                    sha: revision,
                    state: results === 0 ? 'success': 'failure'};
 
     github.statuses.create(message, function(error, data) {
-        console.log("Creating status\n" + message);
+        console.log("Creating status\n" + JSON.stringify(message));
 
         if (error) {
             console.log("Error:\n");
