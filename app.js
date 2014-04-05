@@ -7,7 +7,7 @@ var app = express();
 
 app.use(express.bodyParser());
 
-function createStatus(repository, revision, results) {
+function createStatus(repository, revision, state) {
     var github = new GitHubApi({version: '3.0.0',
                                 debug: true});
 
@@ -19,7 +19,7 @@ function createStatus(repository, revision, results) {
     var message = {user: "sugarlabs",
                    repo: splitted[splitted.length - 1],
                    sha: revision,
-                   state: results === 0 ? 'success': 'failure'};
+                   state: state};
 
     github.statuses.create(message, function(error, data) {
         console.log("Creating status\n" + JSON.stringify(message));
@@ -39,14 +39,22 @@ app.post('/status', function (request, response) {
 
     for (var i = 0; i < packets.length; i++) {
         var packet = packets[i];
+        var payload = packet.payload;
 
-        if (packet.event == 'buildFinished') {
-            var sourceStamps = packet.payload.build.sourceStamps;
+        if (packet.event == 'buildStarted' ||
+            packet.event == 'buildFinished') {
+            var sourceStamps = payload.build.sourceStamps;
             for (var k = 0; k < sourceStamps.length; k++) {
+                var state = 'pending';
+
+                if (packet.event == 'buildFinished') {
+                    state = payload.results === 0 ? 'success': 'failure';
+                }
+
                 var sourceStamp = sourceStamps[k];
                 createStatus(sourceStamp.repository,
                              sourceStamp.revision,
-                             packet.payload.results);
+                             state);
             }
         }
     }
