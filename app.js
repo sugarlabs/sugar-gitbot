@@ -43,7 +43,7 @@ app.post('/status', function (request, response) {
 
     for (var i = 0; i < packets.length; i++) {
         var packet = packets[i];
-        var build = packet.payload;
+        var build = packet.payload.build;
 
         if (packet.event == 'buildStopped') {
             var sourceStamp = build.sourceStamps[0];
