@@ -45,7 +45,7 @@ app.post('/status', function (request, response) {
         var packet = packets[i];
         var build = packet.payload.build;
 
-        if (packet.event == 'buildStopped') {
+        if (packet.event == 'buildFinished') {
             var sourceStamp = build.sourceStamps[0];
 
             if (sourceStamp.category == 'pullrequest') {
