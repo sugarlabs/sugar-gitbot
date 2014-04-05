@@ -11,7 +11,8 @@ function createStatus(repository, revision, results) {
     var github = new GitHubApi({version: "3.0.0"});
 
     github.authenticate({type: "oauth",
-                         token: config.githubToken});
+                         key: config.githubKey,
+                         secret: config.githubSecret});
 
     var splitted = repository.split("/");
 
@@ -21,8 +22,11 @@ function createStatus(repository, revision, results) {
                    state: results === 0 ? 'success': 'failure'};
 
     github.statuses.create(message, function(error, data) {
-        console.log(error);
-        console.log(data);
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("Status created\n" + message);
+        }
     });
 }
 
@@ -79,6 +83,7 @@ app.post('/change', function (request, response) {
 
     rest.post(config.changeHook, options).on('complete',
     function (data, response) {
+        console.log("Change posted\n" + data);
     });
     response.send(200);
 });
