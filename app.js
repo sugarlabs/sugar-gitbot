@@ -64,8 +64,9 @@ app.post('/change', function (request, response) {
     var category;
 
     var pr = payload.pull_request;
+    var action = payload.action;
 
-    if (pr && (pr.action == "opened" || pr.action == "synchronize")) {
+    if (pr && (action == "opened" || action == "synchronize")) {
         repository = pr.head.repo.html_url;
         revision = pr.head.sha;
         author = pr.user.login;
