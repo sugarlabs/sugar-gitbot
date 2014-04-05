@@ -7,7 +7,7 @@ var app = express();
 
 app.use(express.bodyParser());
 
-function createStatus(repository, revision, buildbotUrl, state) {
+function createStatus(repository, revision, state, targetUrl) {
     var github = new GitHubApi({version: '3.0.0',
                                 debug: true});
 
@@ -19,8 +19,11 @@ function createStatus(repository, revision, buildbotUrl, state) {
     var message = {user: "sugarlabs",
                    repo: splitted[splitted.length - 1],
                    sha: revision,
-                   target_url: buildbotUrl,
                    state: state};
+
+    if (buildbotUrl) {
+        message.target_url = targetUrl;
+    }
 
     github.statuses.create(message, function(error, data) {
         console.log("Creating status\n" + JSON.stringify(message));
@@ -42,24 +45,18 @@ app.post('/status', function (request, response) {
         var packet = packets[i];
         var build = packet.payload;
 
-        if (packet.event == 'buildStarted' ||
-            packet.event == 'buildFinished') {
+        if (packet.event == 'buildStarted') {
             var sourceStamp = build.sourceStamps[0];
 
             if (sourceStamp.category == 'pullrequest') {
-                var state = 'pending';
-
-                if (packet.event == 'buildFinished') {
-                    state = build.results === 0 ? 'success': 'failure';
-                }
-
                 var buildbotUrl = 'http://buildbot.sugarlabs.org' +
                                   '/builders/try-master/builds' +
                                   build.properties.buildnumber;
 
                 createStatus(sourceStamp.repository,
                              sourceStamp.revision,
-                             prUrl, state);
+                             build.results === 0 ? 'success': 'failure',
+                             buildbotUrl);
             }
         }
     }
@@ -108,6 +105,8 @@ app.post('/change', function (request, response) {
         console.log("Change posted\n" + data);
     });
 
+    createStatus(repository, revision, 'pending');
+ 
     response.send(200);
 });
 
