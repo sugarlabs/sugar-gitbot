@@ -73,6 +73,9 @@ app.post('/change', function (request, response) {
         author = payload.head_commit.author.name;
         comments = payload.head_commit.message;
         category = "push";
+    } else {
+        response.send(200);
+        return;
     } 
 
     var options = {data: {project: 'sugar-build',
@@ -86,6 +89,7 @@ app.post('/change', function (request, response) {
     function (data, response) {
         console.log("Change posted\n" + data);
     });
+
     response.send(200);
 });
 
