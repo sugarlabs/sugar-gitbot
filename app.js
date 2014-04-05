@@ -63,7 +63,7 @@ app.post('/change', function (request, response) {
     var comments;
     var category;
 
-    var pr = payload.pr;
+    var pr = payload.pull_request;
 
     if (pr && (pr.action == "opened" || pr.action == "synchronize")) {
         repository = pr.head.repo.html_url;
