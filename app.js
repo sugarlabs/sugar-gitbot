@@ -61,11 +61,13 @@ app.post('/change', function (request, response) {
     var comments;
     var category;
 
-    if ('pull_request' in payload) {
-        repository = payload.pull_request.head.repo.html_url;
-        revision = payload.pull_request.head.sha;
-        author = payload.pull_request.user.login;
-        comments = payload.pull_request.title;
+    var pr = payload.pr;
+
+    if (pr && (pr.action == "opened" || pr.action == "synchronize")) {
+        repository = pr.head.repo.html_url;
+        revision = pr.head.sha;
+        author = pr.user.login;
+        comments = pr.title;
         category = "pullrequest";
     } else if (payload.head_commit) {
         repository = payload.repository.url;
