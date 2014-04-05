@@ -78,7 +78,7 @@ app.post('/change', function (request, response) {
         repository = pr.head.repo.html_url;
         revision = pr.head.sha;
         author = pr.user.login;
-        comments = pr.title;
+        comments = pr.title + "\n" + pr.url;
         category = "pullrequest";
     } else if (payload.head_commit) {
         repository = payload.repository.url;
