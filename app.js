@@ -14,8 +14,10 @@ function createStatus(repository, revision, results) {
     github.authenticate({type: 'oauth',
                          token: config.githubToken});
 
+    var splitted = repository.split('/');
+
     var message = {user: "sugarlabs",
-                   repo: repository.split('/')[splitted.length - 1],
+                   repo: splitted[splitted.length - 1],
                    sha: revision,
                    state: results === 0 ? 'success': 'failure'};
 
