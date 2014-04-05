@@ -104,7 +104,7 @@ app.post('/change', function (request, response) {
 
     rest.post(config.changeHook, options).on('complete',
     function (data, response) {
-        console.log("Change posted\n" + data);
+        console.log("Change posted");
     });
 
     createStatus(repository, revision, 'pending');
