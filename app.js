@@ -67,7 +67,7 @@ app.post('/change', function (request, response) {
         author = payload.pull_request.user.login;
         comments = payload.pull_request.title;
         category = "pullrequest";
-    } else if ("head_commit" in payload) {
+    } else if (payload.head_commit) {
         repository = payload.repository.url;
         revision = payload.head_commit.id;
         author = payload.head_commit.author.name;
