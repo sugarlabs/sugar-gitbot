@@ -1,7 +1,6 @@
 var config = {};
 
 config.changeHook = "http://buildbot.sugarlabs.org:8080/change_hook/base"
-config.githubKey = ""
-config.githubSecret = ""
+config.githubToken = ""
 
 module.exports = config;
