@@ -21,7 +21,7 @@ function createStatus(repository, revision, state, targetUrl) {
                    sha: revision,
                    state: state};
 
-    if (buildbotUrl) {
+    if (targetUrl) {
         message.target_url = targetUrl;
     }
 
