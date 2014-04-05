@@ -7,7 +7,7 @@ var app = express();
 
 app.use(express.bodyParser());
 
-function createStatus(repository, revision, state) {
+function createStatus(repository, revision, prUrl, state) {
     var github = new GitHubApi({version: '3.0.0',
                                 debug: true});
 
@@ -19,6 +19,7 @@ function createStatus(repository, revision, state) {
     var message = {user: "sugarlabs",
                    repo: splitted[splitted.length - 1],
                    sha: revision,
+                   target_url: prUrl,
                    state: state};
 
     github.statuses.create(message, function(error, data) {
@@ -43,18 +44,21 @@ app.post('/status', function (request, response) {
 
         if (packet.event == 'buildStarted' ||
             packet.event == 'buildFinished') {
-            var sourceStamps = payload.build.sourceStamps;
-            for (var k = 0; k < sourceStamps.length; k++) {
+            var sourceStamp = payload.build.sourceStamps[0];
+
+            if (sourceStamp.category == 'pullrequest') {
                 var state = 'pending';
 
                 if (packet.event == 'buildFinished') {
                     state = payload.results === 0 ? 'success': 'failure';
                 }
 
-                var sourceStamp = sourceStamps[k];
+                var splittedComments = sourceStamp.comments.split('\n');
+                var prUrl = splittedComments[splittedComments.length - 1];
+
                 createStatus(sourceStamp.repository,
                              sourceStamp.revision,
-                             state);
+                             prUrl, state);
             }
         }
     }
