@@ -76,7 +76,9 @@ app.post('/change', function (request, response) {
     var pr = payload.pull_request;
     var action = payload.action;
 
-    if (pr && (action == "opened" || action == "synchronize")) {
+    if (pr && (action == "opened" ||
+               action == "reopened" ||
+               action == "synchronize")) {
         repository = pr.head.repo.html_url;
         revision = pr.head.sha;
         author = pr.user.login;
