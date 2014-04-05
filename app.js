@@ -22,10 +22,13 @@ function createStatus(repository, revision, results) {
                    state: results === 0 ? 'success': 'failure'};
 
     github.statuses.create(message, function(error, data) {
+        console.log("Creating status\n" + message);
+
         if (error) {
+            console.log("Error:\n");
             console.log(error);
         } else {
-            console.log("Status created\n" + message);
+            console.log("Done.");
         }
     });
 }
