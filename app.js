@@ -55,7 +55,7 @@ app.post('/status', function (request, response) {
 
                 createStatus(sourceStamp.repository,
                              sourceStamp.revision,
-                             build.results === 0 ? 'success': 'failure',
+                             build.results ? 'failure': 'success',
                              buildbotUrl);
             }
         }
