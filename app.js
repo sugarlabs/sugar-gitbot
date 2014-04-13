@@ -11,9 +11,6 @@ function createStatus(repository, revision, state, targetUrl) {
     var github = new GitHubApi({version: '3.0.0',
                                 debug: true});
 
-    github.authenticate({type: 'oauth',
-                         token: config.githubToken});
-
     var splitted = repository.split('/');
 
     var message = {user: splitted[splitted.length - 2],
@@ -22,10 +19,15 @@ function createStatus(repository, revision, state, targetUrl) {
     github.repos.get(message, function(error, data) {
         splitted = data.parent.html_url.split('/');
 
-        message = {user: splitted[splitted.length - 2],
+        var user = splitted[splitted.length - 2];
+
+        message = {user: user,
                    repo: splitted[splitted.length - 1],
                    sha: revision,
                    state: state};
+
+        github.authenticate({type: 'oauth',
+                             token: config.githubTokens[user]});
 
         if (targetUrl) {
             message.target_url = targetUrl;
