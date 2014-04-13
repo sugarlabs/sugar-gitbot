@@ -12,7 +12,8 @@ function createStatus(repository, revision, state, targetUrl) {
                                 debug: true});
 
     github.authenticate({type: 'oauth',
-                         token: config.githubToken});
+                         key: config.githubId,
+                         secret: config.githubSecret});
 
     var splitted = repository.split('/');
 
