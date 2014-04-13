@@ -11,9 +11,9 @@ function createStatus(repository, revision, state, targetUrl) {
     var github = new GitHubApi({version: '3.0.0',
                                 debug: true});
 
-    github.authenticate({type: 'oauth',
-                         key: config.githubId,
-                         secret: config.githubSecret});
+    github.authenticate({type: 'basic',
+                         username: config.githubId,
+                         password: config.githubSecret});
 
     var splitted = repository.split('/');
 
