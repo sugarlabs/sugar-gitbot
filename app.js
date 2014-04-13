@@ -16,24 +16,31 @@ function createStatus(repository, revision, state, targetUrl) {
 
     var splitted = repository.split('/');
 
-    var message = {user: "sugarlabs",
+    var message = {user: splitted[splitted.length - 2],
+                   repo: splitted[splitted.length - 1]};
+
+    github.repos.get(message, function(error, data) {
+        splitted = data.parent.html_url.split('/');
+
+        message = {user: splitted[splitted.length - 2],
                    repo: splitted[splitted.length - 1],
                    sha: revision,
                    state: state};
 
-    if (targetUrl) {
-        message.target_url = targetUrl;
-    }
-
-    github.statuses.create(message, function(error, data) {
-        console.log("Creating status\n" + JSON.stringify(message));
-
-        if (error) {
-            console.log("Error:\n");
-            console.log(error);
-        } else {
-            console.log("Done.");
+        if (targetUrl) {
+            message.target_url = targetUrl;
         }
+
+        github.statuses.create(message, function(error, data) {
+            console.log("Creating status\n" + JSON.stringify(message));
+
+            if (error) {
+                console.log("Error:\n");
+                console.log(error);
+            } else {
+                console.log("Done.");
+            }
+        });
     });
 }
 
