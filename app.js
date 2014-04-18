@@ -1,11 +1,14 @@
 var express = require('express');
 var rest = require('restler');
 var GitHubApi = require('github');
+var winston = require('winston');
 var config = require('./config.js');
 
 var app = express();
 
 app.use(express.bodyParser());
+
+winston.add(winston.transports.File, {filename: 'gitbot.log'});
 
 function createStatus(repository, revision, state, targetUrl) {
     var github = new GitHubApi({version: '3.0.0',
@@ -34,13 +37,12 @@ function createStatus(repository, revision, state, targetUrl) {
         }
 
         github.statuses.create(message, function(error, data) {
-            console.log("Creating status\n" + JSON.stringify(message));
+            winston.info("Creating status\n" + JSON.stringify(message));
 
             if (error) {
-                console.log("Error:\n");
-                console.log(error);
+                winston.error(error);
             } else {
-                console.log("Done.");
+                winston.info("Done.");
             }
         });
     });
@@ -113,7 +115,7 @@ app.post('/change', function (request, response) {
 
     rest.post(config.changeHook, options).on('complete',
     function (data, response) {
-        console.log("Change posted");
+        winston.info("Change posted");
     });
 
     createStatus(repository, revision, 'pending');
