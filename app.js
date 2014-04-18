@@ -50,10 +50,9 @@ function createStatus(repository, revision, state, targetUrl) {
 }
 
 app.post('/status', function (request, response) {
-    response.send(200);
-    var packets = JSON.parse(request.body.packets);
+    winston.debug("Status packets:\n" + request.body.packets);
 
-    winston.debug("Status packets:\n" + packets);
+    var packets = JSON.parse(request.body.packets);
 
     for (var i = 0; i < packets.length; i++) {
         var packet = packets[i];
@@ -79,9 +78,9 @@ app.post('/status', function (request, response) {
 });
 
 app.post('/change', function (request, response) {
-    var payload = JSON.parse(request.body.payload);
+    winston.debug("Change payload\n" + request.body.payload);
 
-    winston.debug("Change payload\n" + payload);
+    var payload = JSON.parse(request.body.payload);
 
     var repository;
     var revision;
