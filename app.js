@@ -8,11 +8,11 @@ var app = express();
 
 app.use(express.bodyParser());
 
-winston.add(winston.transports.File, {filename: 'gitbot.log'});
+winston.add(winston.transports.File, {filename: 'gitbot.log',
+                                      json: false});
 
 function createStatus(repository, revision, state, targetUrl) {
-    var github = new GitHubApi({version: '3.0.0',
-                                debug: true});
+    var github = new GitHubApi({version: '3.0.0'});
 
     var splitted = repository.split('/');
 
