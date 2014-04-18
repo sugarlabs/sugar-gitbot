@@ -9,7 +9,8 @@ var app = express();
 app.use(express.bodyParser());
 
 winston.add(winston.transports.File, {filename: 'gitbot.log',
-                                      json: false});
+                                      json: false,
+                                      level: 'debug'});
 
 function createStatus(repository, revision, state, targetUrl) {
     var github = new GitHubApi({version: '3.0.0'});
@@ -52,6 +53,8 @@ app.post('/status', function (request, response) {
     response.send(200);
     var packets = JSON.parse(request.body.packets);
 
+    winston.debug("Status packets:\n" + packets);
+
     for (var i = 0; i < packets.length; i++) {
         var packet = packets[i];
         var build = packet.payload.build;
@@ -77,6 +80,8 @@ app.post('/status', function (request, response) {
 
 app.post('/change', function (request, response) {
     var payload = JSON.parse(request.body.payload);
+
+    winston.debug("Change payload\n" + payload);
 
     var repository;
     var revision;
