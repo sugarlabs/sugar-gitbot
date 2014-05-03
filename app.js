@@ -10,7 +10,10 @@ app.use(express.bodyParser());
 
 winston.add(winston.transports.File, {filename: 'gitbot.log',
                                       json: false,
-                                      level: 'debug'});
+                                      level: 'debug',
+                                      handleExceptions: true,
+                                      maxsize: 10485760,
+                                      maxFiles: 5});
 
 function createStatus(repository, revision, state, targetUrl) {
     var github = new GitHubApi({version: '3.0.0'});
