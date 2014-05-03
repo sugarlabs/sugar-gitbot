@@ -23,7 +23,16 @@ function createStatus(repository, revision, state, targetUrl) {
     var message = {user: splitted[splitted.length - 2],
                    repo: splitted[splitted.length - 1]};
 
+    winston.info("Getting parent\n" + JSON.stringify(message));
+
     github.repos.get(message, function(error, data) {
+        if (error) {
+            winston.error(error);
+            return;
+        }
+
+        winston.info("Repository data\n" + JSON.stringify(data));
+ 
         splitted = data.parent.html_url.split('/');
 
         var user = splitted[splitted.length - 2];
@@ -40,9 +49,9 @@ function createStatus(repository, revision, state, targetUrl) {
             message.target_url = targetUrl;
         }
 
-        github.statuses.create(message, function(error, data) {
-            winston.info("Creating status\n" + JSON.stringify(message));
+        winston.info("Creating status\n" + JSON.stringify(message));
 
+        github.statuses.create(message, function(error, data) {
             if (error) {
                 winston.error(error);
             } else {
