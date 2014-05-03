@@ -62,7 +62,7 @@ app.post('/status', function (request, response) {
         var build = packet.payload.build;
         var sourceStamp = build.sourceStamps[0];
 
-        if (packet.event == 'buildFinished' && sourceStamp.changes) {
+        if (packet.event == 'buildFinished' && sourceStamps.changes) {
             if (sourceStamp.changes[0].category == 'pullrequest') {
                 var buildbotUrl = 'http://buildbot.sugarlabs.org' +
                                   '/builders/try-master/builds/' +
