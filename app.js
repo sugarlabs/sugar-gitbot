@@ -135,7 +135,9 @@ app.post('/change', function (request, response) {
         winston.info("Change posted");
     });
 
-    createStatus(repository, revision, 'pending');
+    if (category == "pullrequest") {
+        createStatus(repository, revision, 'pending');
+    }
  
     response.send(200);
 });
