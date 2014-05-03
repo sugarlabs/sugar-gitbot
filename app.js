@@ -60,10 +60,12 @@ app.post('/status', function (request, response) {
     for (var i = 0; i < packets.length; i++) {
         var packet = packets[i];
         var build = packet.payload.build;
-        var sourceStamp = build.sourceStamps[0];
 
-        if (packet.event == 'buildFinished' && sourceStamps.changes) {
-            if (sourceStamp.changes[0].category == 'pullrequest') {
+        if (packet.event == 'buildFinished') {
+            var sourceStamp = build.sourceStamps[0];
+
+            if (sourceStamps.changes &&
+                sourceStamp.changes[0].category == 'pullrequest') {
                 var buildbotUrl = 'http://buildbot.sugarlabs.org' +
                                   '/builders/try-master/builds/' +
                                   build.properties[3][1];
