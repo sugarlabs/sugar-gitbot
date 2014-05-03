@@ -70,7 +70,7 @@ app.post('/status', function (request, response) {
         var packet = packets[i];
         var build = packet.payload.build;
 
-        if (packet.event == 'buildFinished') {
+        if (packet.event == 'buildFinished' && build.sourceStamps) {
             var sourceStamp = build.sourceStamps[0];
 
             if (sourceStamp.changes &&
